@@ -1,5 +1,21 @@
 <?php
+@session_start(); //hanya bisa di acces oleh admin
 require_once 'function.php';
+
+//cek apakah suda login sebagai admin
+if (@$_SESSION['email']) {
+    if (@!$_SESSION['level'] == "Admin") {
+        header("location:../inc/register.php");
+    } else {
+        if (@$_SESSION['level'] == "Petugas") {
+            header("location:../petugas/index.php");
+        } elseif (@$_SESSION['level'] == "Penyewa") {
+            header("location:../penyewa/index.php");
+        }
+    }
+} else {
+    header("location:../inc/login.php");
+}
 
 //Registrasi
 if (isset($_POST["registrasi"])) {

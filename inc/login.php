@@ -4,7 +4,7 @@ require_once 'function.php';
 
 //cek session
 if (@$_SESSION['email']) {
-    if (@!$_SESSION['level'] == "admin") {
+    if (@$_SESSION['level'] == "Admin") {
         header("location:../admin/index.php");
     } else {
         if (@$_SESSION['level'] == "petugas") {
