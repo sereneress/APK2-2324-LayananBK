@@ -1,3 +1,83 @@
+<?php
+session_start();
+require_once 'function.php';
+
+//cek session
+if (@$_SESSION['email']) {
+    if (@!$_SESSION['level'] == "admin") {
+        header("location:../admin/index.php");
+    } else {
+        if (@$_SESSION['level'] == "petugas") {
+            header("location:../petugas/index.php");
+        } elseif (@$_SESSION['level'] == "penyewa") {
+            header("location:../penyewa/index.php");
+        } elseif (@$_SESSION['level'] == "owner") {
+            header("location:../owner/index.php");
+        } elseif (@$_SESSION['level'] == "karyawan") {
+            header("location:../karyawan/index.php");
+        }
+    }
+}
+
+//cek login
+
+// jika tombol signin (login) di tekan, maka akan mengirim variable yang ada form login yaitu username(email) dan password
+
+if (isset($_POST['login'])) {
+    $email = strtolower(stripslashes($_POST['email'])); //Email di input oleh user (di dalam post itu name form yg ada di bawah)
+    $userpass = mysqli_real_escape_string($KONEKSI, $_POST['password']); //Password yang di input oleh user
+
+    //lalu kita query ke data base
+    $sql = mysqli_query($KONEKSI, "SELECT password, id_tipe FROM tbl_users WHERE email='$email' ");
+
+    list($paswd, $role) = mysqli_fetch_array($sql);
+    //echo $role;
+    //ambil level role/user  sedang login
+
+    $tipe_user = "SELECT * FROM tbl_tipe_user WHERE id_tipe_user='$role'";
+    $hasil = mysqli_query($KONEKSI, $tipe_user);
+    $row = mysqli_fetch_assoc($hasil);
+    $level = $row['tipe_user'];
+    //echo $level;
+    //jika data di temukan dalam database, maka akan melakukan proses validasi dengan menggunakan password_verify
+
+    if (mysqli_num_rows($sql) > 0) {
+        /*jika ada data (>0) maka kita lakukan validasi
+        $userpass ==> diambil dari form input yang dilakukan oleh user
+        $paswd ==> password yang ada di database dalam bentuk HASH
+        */
+        if (password_verify($userpass, $paswd)) {
+            //akan kita buat session
+            $_SESSION['email'] = $email; //mengambil variable $email dari atas (isset)
+            $_SESSION['level'] = $level; //mengambil variable $level dari atas (list)
+
+            /*jika berhasil login, maka user akan kita arahkan ke halaman admin sesuai dengan level user 
+            jika dia level admin ===>admin/index.php
+            jika dia level petugas ===>petugas/index.php
+            jika dia level penyewa ===>penyewa/index.php */
+
+            if ($_SESSION['level'] == "Admin") {  //variable (Admin) itu di sesuaikan dengan data base begitupun semuanya
+                header("location:../admin/index.php");
+            } elseif ($_SESSION['level'] == "Pengguna") {
+                header("location:../pengguna/index.php");
+            } elseif ($_SESSION['level'] == "Siswa") {
+                header("location:../siswa/index.php");
+            }
+        } else {
+            echo '<script language="javascript">
+            window.alert("LOGIN GAGAL, EMAIL ATAU PASSWORD ANDA SALAH !!");
+            window.document.location.href="login.php";
+            </script>';
+        }
+    } else {
+        echo '<script language="javascript">
+        window.alert("LOGIN GAGAL, EMAIL TIDAK DI TEMUKAN !!");
+        window.document.location.href="login.php";
+        </script>';
+    }
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
