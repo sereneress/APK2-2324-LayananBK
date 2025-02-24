@@ -124,4 +124,42 @@ function tampil($DATA)
     return $data; // kita kembalikan nilainya, di munculkan 
 
 }
+
+// ===========================
+// FUNGSI LOGIN
+// ===========================
+function login($username, $password)
+{
+    global $KONEKSI;
+
+    $query = "SELECT u.id_user, u.password, t.nama_tipe 
+              FROM tbl_users u
+              JOIN tbl_tipe_user t ON u.id_tipe = t.id_tipe
+              WHERE u.username = '$username'";
+
+    $result = mysqli_query($KONEKSI, $query);
+
+    if (mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        if (password_verify($password, $row['password'])) {
+            session_start();
+            $_SESSION['user_id'] = $row['id_user'];
+            $_SESSION['role'] = $row['nama_tipe'];
+            return $row['nama_tipe'];
+        }
+    }
+    return false;
+}
+
+// ===========================
+// FUNGSI LOGOUT
+// ===========================
+function logout()
+{
+    session_start();
+    session_destroy();
+    header("Location: login.php");
+    exit();
+}
+
 ?>
