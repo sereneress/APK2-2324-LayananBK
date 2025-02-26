@@ -179,28 +179,6 @@ if (isset($_POST['login'])) {
                 <label class="form-label">Password<span class="text-danger"></span></label>
                 <input class="form-control form-control-lg" id="Inputpassword" name="password" type="password" placeholder="Password">
             </div>
-
-            <!--<div class="mb-4">
-                        <label for="inputTypeUser" class="">Type User</label>
-                        <select class="custom-select rounded-0" id="inputTypeUser" name="type_user" onchange="tipeUser(this.value);" required>
-                            <option selected="" disabled="" value="">Select Type User..</option>
-                            <option value="1">Admin</option>
-                            <option value="2">Petugas</option>
-                            <option value="3">Karyawan</option>
-                            <option value="4">Owner</option>
-                            <option value="5">Penyewa</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-4" id="x_branch" style="display:none;">
-                        <label for="ddlBranch" class="">Cabang Apartement</label>
-                        <select class="custom-select rounded-0"  id="ddlBranch" name="branch" required>
-                            <option selected="" disabled="" value="">Pilih Cabang...</option>
-                            <option value="1">Cabang 1</option>
-                            <option value="2">Cabang 2</option>
-                            <option value="3">Cabang 3</option>
-                        </select>
-                    </div>-->
             <button type="submit" name="login" class="btn btn-primary btn-lg btn-block">Login</button>
         </form>
         <div class="register-link">
