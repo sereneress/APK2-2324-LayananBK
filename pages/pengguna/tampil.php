@@ -40,6 +40,8 @@
                                 <th>ID</th>
                                 <th>Photo</th>
                                 <th>Nama</th>
+                                <th>Email</th>
+                                <th>Jenkel</th>
                                 <th>Telepon</th>
                                 <th>Action</th>
                             </tr>
@@ -54,16 +56,25 @@
                             ?>
                                 <tr>
                                     <td><?= $user['id_user']; ?></td>
-                                    <td><a class="product-list-img" href="javascript: void(0)" ;><img src="../images/petugas/<?= $user['path_photo_petugas'];  ?>" alt="User" width="100px"></td>
-                                    <td><?= $user['nama_petugas'];  ?></td>
-                                    <td><?= $user['telepon_petugas'];  ?></td>
+                                    <td><a class="product-list-img" href="javascript: void(0)" ;><img src="../images/pengguna/<?= $user['path_photo_pengguna'];  ?>" alt="User" width="100px"></td>
+                                    <td><?= $user['nama_pengguna'];  ?></td>
+                                    <td><?= $user['email'];  ?></td>
+                                    <td>
+							            <?php if ($user['jenkel'] == 'L') {
+                                                    echo 'Laki-Laki';
+                                                } elseif ($user['jenkel'] == 'P') {
+                                                    echo 'Perempuan';
+                                                }
+                                        ?>
+						            </td>
+                                    <td><?= $user['telepon_pengguna'];  ?></td>
                                     <td class="">
                                         <details>
                                             <summary>⋮</summary>
-                                            <a href="?pages=user_petugas&aksi=view&id=<?php echo $user['id_user']; ?>">View</a><br>
-                                            <a href="?pages=user_petugas&aksi=edit&id=<?php echo $user['id_user']; ?>">Edit</a><br>
+                                            <a href="?pages=user_pengguna&aksi=view&id=<?php echo $user['id_user']; ?>">View</a><br>
+                                            <a href="?pages=user_pengguna&aksi=edit&id=<?php echo $user['id_user']; ?>">Edit</a><br>
                                             <a href="#">Edit Modal</a><br>
-                                            <a href="?pages=user_petugas&aksi=hapus&id=<?php echo $user['id_user']; ?>">Delete</a><br>
+                                            <a href="?pages=user_pengguna&aksi=hapus&id=<?php echo $user['id_user']; ?>">Delete</a><br>
                                         </details>
                                     </td>
                                 <?php
@@ -77,6 +88,8 @@
                                 <th>ID</th>
                                 <th>Photo</th>
                                 <th>Nama</th>
+                                <th>Email</th>
+                                <th>Jenkel</th>
                                 <th>Telepon</th>
                                 <th>Action</th>
                             </tr>

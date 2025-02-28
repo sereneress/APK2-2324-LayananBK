@@ -125,6 +125,70 @@ function tampil($DATA)
 
 }
 
+//fungsi upload file menggunakan parameter (NEW)
+function upload_file_new($data, $file, $target)
+{
+    //inisialisasi elemen dari foto/filenya
+    $namaFile = $file['Photo']['name'];
+    $ukuranFile = $file['Photo']['size'];
+    $error = $file['Photo']['error'];
+    $tmpName = $file['Photo']['tmp_name'];
+    $tipeFile = $file['Photo']['type'];
+
+    $kode   = htmlspecialchars($data['kode']);
+
+    //debug buat element $data dan $file
+
+    echo "<pre>";
+    print_r($data);  //melihat data yang akan di terima
+    print_r($file);  //melihat data yang akan di terima
+    echo "</pre>";
+
+    //pastikan bahwa user melakukan upload file
+
+    if ($error == UPLOAD_ERR_NO_FILE) {
+        echo "<script>alert('Tidak ada file yang di upload!!');
+        </script>";
+        return false;
+    }
+
+    //validasi ekstenssi file
+    $ekstensiValid = ['jpg', 'jpeg', 'bmp', 'png'];
+    $ekstensiFile = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
+
+    if (! in_array($ekstensiFile, $ekstensiValid)) {
+        echo "<script>alert('file yang anda upload bukan gambar!!');
+        </script>";
+        return false;
+    }
+
+    //Validasi ukuran gambar
+    if ($ukuranFile > 1 * 1024 * 1024) {
+        echo "<script>alert('ukuran file tidak boleh lebih dari 1MB!!');
+        </script>";
+        return false;
+    }
+
+    //Membuat nama file baru yang uniq
+    $id_random = uniqid();
+    $namaFileBaru = $kode . "_" . $id_random . "." . $ekstensiFile;
+
+    $file_path = $target . $namaFileBaru;
+
+    //cekk apakah file sudah terupload
+    if (move_uploaded_file($tmpName, $file_path)) {
+        echo "<script>alert('file berhasil di upload!!');
+        </script>";
+        return $namaFileBaru;
+    } else {
+        echo "<script>alert('Gagak Upload File!!');
+        </script>";
+        return false;
+    }
+}
+
+
+
 // FUNGSI LOGIN
 
 function login($username, $password)
@@ -158,6 +222,8 @@ function logout()
     header("Location: login.php");
     exit();
 }
+
+
 
 //fungsi tambah data admin
 function tambah_admin($DATA)
@@ -276,5 +342,73 @@ function upload_file()
         return false;
     }
 }
+
+//fungsi tambah petugas
+function tambah_pengguna($data, $file, $target)
+{
+    global $KONEKSI;
+    global $tgl;
+
+    $id_pengguna   = htmlspecialchars($_POST['kode']);
+    $nama_png = htmlspecialchars($_POST['nama_png']);
+    $jenkel      = htmlspecialchars($_POST['jenkel']);
+    $email    = htmlspecialchars($_POST['email']);
+    $telepon    = htmlspecialchars($_POST['telepon']);
+    $role       = stripslashes($_POST['id_tipe']);
+    $password    = mysqli_real_escape_string($KONEKSI, $_POST['password']);
+    $password2       = mysqli_real_escape_string($KONEKSI, $_POST['password2']);
+
+    //kita harus upload file
+    $gambar_foto = upload_file_new($data, $file, $target);
+
+    //jika gambar di upload operasi di hentikan
+    if (!$gambar_foto) {
+        return false;
+    }
+
+    //cek email yang di daftar apakah sudah di pakai apa belum
+    $result = mysqli_query($KONEKSI, "SELECT email FROM tbl_users WHERE email='$email' ");
+    if (mysqli_fetch_assoc($result)) {
+        echo "<script>alert('Email Yang Di Input Sudah Ada Di DataBase!!!')
+        document.location.href='?pages=user_petugas'
+        </script>";
+        return false;
+    }
+
+    //cek konfirmasi password
+    if ($password !== $password2) {
+        echo "<script>alert('Konfirmasi Password Yang Di Input Tidak Sama!!!')
+        document.location.href='?pages=user_pengguna'
+        </script>";
+        return false;
+    }
+
+    //kita lakukan enkripsi  password yang dia input
+    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+    //tambahkan data user baru ke tb_users
+    $sql_user = "INSERT INTO tbl_users SET
+    id_user ='$id_pengguna',
+    email ='$email',
+    password ='$password_hash',
+    id_tipe ='$role',
+    create_at = '$tgl' ";
+
+    mysqli_query($KONEKSI, $sql_user) or die("GAGAL MENAMBAHKAN USER BARU!!") . mysqli_error($KONEKSI);
+
+    //tambahkan user baru ke tb_admin
+    $sql_petugas = "INSERT INTO tbl_pengguna SET
+    nama_pengguna ='$nama_png',
+    telepon_pengguna ='$telepon',
+    path_photo_pengguna ='$gambar_foto',
+    id_user ='$id_pengguna',
+    jenkel ='$jenkel',
+    create_at ='$tgl' ";
+
+    mysqli_query($KONEKSI, $sql_petugas) or die("GAGAL MENAMBAHKAN PENGGUNA BARU!!") . mysqli_error($KONEKSI);
+
+    return mysqli_affected_rows($KONEKSI);
+}
+
 
 ?>
