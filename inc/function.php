@@ -566,5 +566,67 @@ function tambah_pengguna($data, $file, $target)
     return mysqli_affected_rows($KONEKSI);
 }
 
+//fungsi edit petugas
+function edit_pengguna($data, $target, $file)
+{
+    global $KONEKSI;
+    global $tgl;
+
+    $id_pengguna      = stripslashes($data['kode']);
+    $nama_pengguna    = stripslashes($data['nama_png']);
+    $jenkel          = stripslashes($data['jenkel']);
+    $email_pengguna   = stripslashes($data['email']);
+    $telepon_pengguna = stripslashes($data['telepon']);
+    $foto_lama       = stripslashes($data['photo_db']);
+
+    $cek_file_lama = $target . $foto_lama; //lokasi foto lama
+
+    // cek apakah ada file baru yang di upload oleh user
+    if (isset($_FILES['Photo']) && $_FILES['Photo']['error'] !== UPLOAD_ERR_NO_FILE) {
+        //kita harus upload file
+        $gambar_foto = upload_file_new($data, $file, $target);
+        echo $gambar_foto;
+
+        //kita pastikan nama file baru terupload (Debuggin)
+        echo "File Baru :" . $gambar_foto . "Berhasil Di Upload";
+
+        //kita pastikan file lama terhapus (unlink)
+        //cek dulu file lama di db apakah ada di folder target
+        if ($gambar_foto && file_exists($cek_file_lama)) {
+            if (unlink($cek_file_lama)) {
+                // true ==> Berhasil hapus data lama
+                echo "Berhasil hapus file lama";
+            } else {
+                //false ==> gagal hapus file lama
+                echo "Gagal hapus file lama";
+            }
+        }
+    } else {
+        //jika tidak ada file gambar baru yang di upload
+        $gambar_foto = $foto_lama;
+        echo "Menggunakan Foto Lama : " . $foto_lama;
+    }
+
+    //update (edit) data ke tbl_petugas
+    $sql_user = "UPDATE tbl_pengguna SET
+        nama_pengguna  ='$nama_pengguna',
+        jenkel ='$jenkel',
+        telepon_pengguna ='$telepon_pengguna',
+        path_photo_pengguna ='$gambar_foto',
+        update_at ='$tgl' WHERE id_user ='$id_pengguna' ";
+
+
+    //cek apakah query update data berhasil
+    if (mysqli_query($KONEKSI, $sql_user)) {
+        echo "<script>alert('Data Berhasil Di Update!!')</script>";
+    } else {
+        echo "<script>alert('Data Gagal Di Update!!')</script>";
+    }
+
+
+    return mysqli_affected_rows($KONEKSI);
+} //kurung tutup function edit_petugas
+
+
 
 ?>
