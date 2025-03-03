@@ -343,6 +343,67 @@ function upload_file()
     }
 }
 
+//fungsi edit admin
+function edit_admin($data)
+{
+    global $KONEKSI;
+    global $tgl;
+
+    $id_admin   = htmlspecialchars($data['id_admin']);
+    $nama_admin = htmlspecialchars($data['nama_admin']);
+    $email      = htmlspecialchars($data['email']);
+    $telepon    = htmlspecialchars($data['telepon']);
+    $foto_lama  = htmlspecialchars($data['photo_db']);
+
+    $target = '../images/users/';
+    $cek_file_lama = $target . $foto_lama; //lokasi foto lama
+
+    // cek apakah ada file baru yang di upload oleh user
+    if (isset($_FILES['Photo']) && $_FILES['Photo']['error'] !== UPLOAD_ERR_NO_FILE) {
+        //jika ada file gambar baru yang di upload
+        $foto_edit = upload_file();
+
+        //kita pastikan nama file baru terupload (Debuggin)
+        echo "File Baru :" . $foto_edit . "Berhasil Di Upload";
+
+        //kita pastikan file lama terhapus (unlink)
+        //cek dulu file lama di db apakah ada di folder target
+        if ($foto_edit && file_exists($cek_file_lama)) {
+            if (unlink($cek_file_lama)) {
+                // true ==> Berhasil hapus data lama
+                echo "Berhasil hapus file lama";
+            } else {
+                //false ==> gagal hapus file lama
+                echo "Gagal hapus file lama";
+            }
+        }
+    } else {
+        //jika tidak ada file gambar baru yang di upload
+        $foto_edit = $foto_lama;
+        echo "Menggunakan Foto Lama : " . $foto_lama;
+    }
+
+
+    //update (edit) data ke tbl_admin
+    $sql_user = "UPDATE tbl_admin SET
+    nama_admin ='$nama_admin',
+    telepon_admin ='$telepon',
+    path_photo_admin ='$foto_edit',
+    update_at ='$tgl' WHERE tbl_admin.id_user ='$id_admin' ";
+
+
+    //cek apakah query update data berhasil
+    if (mysqli_query($KONEKSI, $sql_user)) {
+        echo "<script>alert('Data Berhasil Di Update!!')</script>";
+    } else {
+        echo "<script>alert('Data Gagal Di Update!!')</script>";
+    }
+
+
+    return mysqli_affected_rows($KONEKSI);
+} //kurung tutup function edit_admin
+
+
 //fungsi tambah petugas
 function tambah_pengguna($data, $file, $target)
 {
