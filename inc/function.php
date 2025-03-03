@@ -499,7 +499,7 @@ function upload_new_file($data, $file, $target)
 }
 
 
-//fungsi tambah petugas
+//fungsi tambah pengguna
 function tambah_pengguna($data, $file, $target)
 {
     global $KONEKSI;
@@ -526,7 +526,7 @@ function tambah_pengguna($data, $file, $target)
     $result = mysqli_query($KONEKSI, "SELECT email FROM tbl_users WHERE email='$email' ");
     if (mysqli_fetch_assoc($result)) {
         echo "<script>alert('Email Yang Di Input Sudah Ada Di DataBase!!!')
-        document.location.href='?pages=user_petugas'
+        document.location.href='?pages=user_pengguna'
         </script>";
         return false;
     }
@@ -553,7 +553,7 @@ function tambah_pengguna($data, $file, $target)
     mysqli_query($KONEKSI, $sql_user) or die("GAGAL MENAMBAHKAN USER BARU!!") . mysqli_error($KONEKSI);
 
     //tambahkan user baru ke tb_admin
-    $sql_petugas = "INSERT INTO tbl_pengguna SET
+    $sql_pengguna = "INSERT INTO tbl_pengguna SET
     nama_pengguna ='$nama_png',
     telepon_pengguna ='$telepon',
     path_photo_pengguna ='$gambar_foto',
@@ -561,12 +561,12 @@ function tambah_pengguna($data, $file, $target)
     jenkel ='$jenkel',
     create_at ='$tgl' ";
 
-    mysqli_query($KONEKSI, $sql_petugas) or die("GAGAL MENAMBAHKAN PENGGUNA BARU!!") . mysqli_error($KONEKSI);
+    mysqli_query($KONEKSI, $sql_pengguna) or die("GAGAL MENAMBAHKAN PENGGUNA BARU!!") . mysqli_error($KONEKSI);
 
     return mysqli_affected_rows($KONEKSI);
 }
 
-//fungsi edit petugas
+//fungsi edit pengguna
 function edit_pengguna($data, $target, $file)
 {
     global $KONEKSI;
@@ -607,7 +607,7 @@ function edit_pengguna($data, $target, $file)
         echo "Menggunakan Foto Lama : " . $foto_lama;
     }
 
-    //update (edit) data ke tbl_petugas
+    //update (edit) data ke tbl_pengguna
     $sql_user = "UPDATE tbl_pengguna SET
         nama_pengguna  ='$nama_pengguna',
         jenkel ='$jenkel',
@@ -625,7 +625,42 @@ function edit_pengguna($data, $target, $file)
 
 
     return mysqli_affected_rows($KONEKSI);
-} //kurung tutup function edit_petugas
+} //kurung tutup function edit_pengguna
+
+// fungsi hapus pengguna
+function hapus_pengguna()
+{
+    global $KONEKSI;
+    $id_user = $_GET['id'];
+
+    // hapus file gambar yang usernya kita hapus
+    $sql = "SELECT * FROM tbl_pengguna WHERE id_user='$id_user' " or die("Data tidak ditemukan" . mysqli_error($KONEKSI));
+    $hasil = mysqli_query($KONEKSI, $sql);
+    $row = mysqli_fetch_assoc($hasil);
+
+    $photo = $row['path_photo_pengguna'];
+    $target = '../images/pengguna/';
+
+    if (!$photo == "") {
+        // Jika ada maka kita hapus
+        unlink($target . $photo);
+    }
+
+
+    // hapus data di tabel pengguna
+    $query_admin = "DELETE FROM tbl_pengguna WHERE id_user='$id_user' ";
+    mysqli_query($KONEKSI, $query_admin) or die("Gagal melakukan hapus data pengguna" . mysqli_error($KONEKSI));
+
+    // hapus data di tabel users
+    $query_user = "DELETE FROM tbl_users WHERE id_user='$id_user' ";
+    mysqli_query($KONEKSI, $query_user) or die("Gagal melakukan hapus data user" . mysqli_error($KONEKSI));
+
+
+    return mysqli_affected_rows($KONEKSI);
+}
+
+
+
 
 
 
