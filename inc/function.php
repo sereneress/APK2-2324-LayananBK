@@ -404,6 +404,101 @@ function edit_admin($data)
 } //kurung tutup function edit_admin
 
 
+// fungsi hapus user admin
+function hapus_admin()
+{
+    global $KONEKSI;
+    $id_user = $_GET['id'];
+
+    // hapus file gambar yang usernya kita hapus
+    $sql = "SELECT * FROM tbl_admin WHERE id_user='$id_user' " or die("Data tidak ditemukan" . mysqli_error($KONEKSI));
+    $hasil = mysqli_query($KONEKSI, $sql);
+    $row = mysqli_fetch_assoc($hasil);
+
+    $photo = $row['path_photo_admin'];
+    $target = '../images/users/';
+
+    if (!$photo == "") {
+        // Jika ada maka kita hapus
+        unlink($target . $photo);
+    }
+
+
+    // hapus data di tabel admin
+    $query_admin = "DELETE FROM tbl_admin WHERE id_user='$id_user' ";
+    mysqli_query($KONEKSI, $query_admin) or die("Gagal melakukan hapus data admin" . mysqli_error($KONEKSI));
+
+    // hapus data di tabel users
+    $query_user = "DELETE FROM tbl_users WHERE id_user='$id_user' ";
+    mysqli_query($KONEKSI, $query_user) or die("Gagal melakukan hapus data user" . mysqli_error($KONEKSI));
+
+
+    return mysqli_affected_rows($KONEKSI);
+}
+
+//fungsi upload file menggunakan parameter (NEW)
+function upload_new_file($data, $file, $target)
+{
+    //inisialisasi elemen dari foto/filenya
+    $namaFile = $file['Photo']['name'];
+    $ukuranFile = $file['Photo']['size'];
+    $error = $file['Photo']['error'];
+    $tmpName = $file['Photo']['tmp_name'];
+    $tipeFile = $file['Photo']['type'];
+
+    $kode   = htmlspecialchars($data['kode']);
+
+    //debug buat element $data dan $file
+
+    echo "<pre>";
+    print_r($data);  //melihat data yang akan di terima
+    print_r($file);  //melihat data yang akan di terima
+    echo "</pre>";
+
+    //pastikan bahwa user melakukan upload file
+
+    if ($error == UPLOAD_ERR_NO_FILE) {
+        echo "<script>alert('Tidak ada file yang di upload!!');
+        </script>";
+        return false;
+    }
+
+    //validasi ekstenssi file
+    $ekstensiValid = ['jpg', 'jpeg', 'bmp', 'png'];
+    $ekstensiFile = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
+
+    if (! in_array($ekstensiFile, $ekstensiValid)) {
+        echo "<script>alert('file yang anda upload bukan gambar!!');
+        </script>";
+        return false;
+    }
+
+    //Validasi ukuran gambar
+    if ($ukuranFile > 1 * 1024 * 1024) {
+        echo "<script>alert('ukuran file tidak boleh lebih dari 1MB!!');
+        </script>";
+        return false;
+    }
+
+    //Membuat nama file baru yang uniq
+    $id_random = uniqid();
+    $namaFileBaru = $kode . "_" . $id_random . "." . $ekstensiFile;
+
+    $file_path = $target . $namaFileBaru;
+
+    //cekk apakah file sudah terupload
+    if (move_uploaded_file($tmpName, $file_path)) {
+        echo "<script>alert('file berhasil di upload!!');
+        </script>";
+        return $namaFileBaru;
+    } else {
+        echo "<script>alert('Gagak Upload File!!');
+        </script>";
+        return false;
+    }
+}
+
+
 //fungsi tambah petugas
 function tambah_pengguna($data, $file, $target)
 {
