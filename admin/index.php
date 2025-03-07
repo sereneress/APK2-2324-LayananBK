@@ -230,7 +230,44 @@ foreach ($sql_login as $user_login) {
                                             <a class="nav-link" href="?pages=user_pengguna">Pengguna</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="?pages=user_siswa">Siswa</a> 
+                                            <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-5" aria-controls="submenu-5">Siswa/i Smk MVP Ars</a>
+                                            <div id="submenu-5" class="collapse submenu" style="">
+                                                <ul class="nav flex-column">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_perhotelan1">Perhotelan 1</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_perhotelan2">Perhotelan 2</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_kuliner1">Kuliner 1</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_kuliner2">Kuliner 2</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_tkj1">Teknik Komputer Dan Jaringan 1</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_tkj2">Teknik Komputer Dan Jaringan 2</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_rpl">Rekayasa Perangkat Lunak</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_tsm">Teknik Spedah Motor</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_akl">Akuntansi</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_farm">Farmasi</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_otkp">Menejemen Perkantoran</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </li>
                                     </ul>
                                 </div>
