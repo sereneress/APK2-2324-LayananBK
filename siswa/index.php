@@ -8,13 +8,13 @@ jika dia level petugas ===>petugas/index.php
 jika dia level penyewa ===>penyewa/index.php*/
 
 if (@$_SESSION['email']) {
-    if (@!$_SESSION['level'] == "Admin") {
-        header("location:../admin/index.php");
+    if (@!$_SESSION['level'] == "Pengguna") {
+        header("location:../pengguna/index.php");
     } else {
-        if (@$_SESSION['level'] == "petugas") {
-            header("location:../petugas/index.php");
-        } elseif (@$_SESSION['level'] == "penyewa") {
-            header("location:../Penyewa/index.php");
+        if (@$_SESSION['level'] == "Admin") {
+            header("location:../admin/index.php");
+        } elseif (@$_SESSION['level'] == "Siswa") {
+            header("location:../siswa/index.php");
         }
     }
 } else {
@@ -197,40 +197,49 @@ foreach ($sql_login as $user_login) {
                             <li class="nav-item ">
                                 <a class="nav-link active" href="?pages=dashboard" aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-user-circle"></i>Dashboard <span class="badge badge-success">6</span></a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="fa fa-fw fa-rocket"></i>Master</a>
-                                <div id="submenu-2" class="collapse submenu" style="">
-                                    <ul class="nav flex-column">
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="?pages=tampil">Tampil</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="?pages=tambah">Tambah</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="?pages=invoice">Invoice</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="?pages=profile">Profil</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="?pages=setting">Setting</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
                             <li class="nav-item ">
                                 <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4"><i class="fab fa-fw fa-wpforms"></i>User</a>
                                 <div id="submenu-4" class="collapse submenu" style="">
                                     <ul class="nav flex-column">
-                                    <li class="nav-item">
-                                            <a class="nav-link" href="?pages=user_admin">Admin</a>
-                                        </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="?pages=user_pengguna">Pengguna</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="?pages=user_siswa">Siswa</a> 
+                                            <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-5" aria-controls="submenu-5">Siswa/i Smk MVP Ars</a>
+                                            <div id="submenu-5" class="collapse submenu" style="">
+                                                <ul class="nav flex-column">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_perhotelan1">Perhotelan 1</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_perhotelan2">Perhotelan 2</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_kuliner1">Kuliner 1</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_kuliner2">Kuliner 2</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_tkj1">Teknik Komputer Dan Jaringan 1</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_tkj2">Teknik Komputer Dan Jaringan 2</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_rpl">Rekayasa Perangkat Lunak</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_tsm">Teknik Spedah Motor</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_akl">Akuntansi</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_farm">Farmasi</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="?pages=user_otkp">Menejemen Perkantoran</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </li>
                                     </ul>
                                 </div>
