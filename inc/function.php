@@ -224,7 +224,6 @@ function logout()
 }
 
 
-
 //fungsi tambah data admin
 function tambah_admin($DATA)
 {
@@ -499,7 +498,7 @@ function upload_new_file($data, $file, $target)
 }
 
 
-//fungsi tambah petugas
+//fungsi tambah pengguna
 function tambah_pengguna($data, $file, $target)
 {
     global $KONEKSI;

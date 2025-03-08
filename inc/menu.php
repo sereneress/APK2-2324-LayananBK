@@ -18,7 +18,7 @@ switch ($pages) {
         break;
 
     case 'setting':
-        include '../pages/master/setting.php';
+        include '../pages/setting/setting.php';
         break;
 
     case 'dashboard':
