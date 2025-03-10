@@ -1,4 +1,4 @@
-<?php 
+<?php
 //set waktu
 date_default_timezone_set('Asia/Jakarta');
 $tgl = date('y-m-d H:i:s');
@@ -25,7 +25,7 @@ function autonumber($tabel, $kolom, $lebar = 0, $awalan)
     $tabel ORDER BY $kolom desc limit 1") or die(mysqli_error($KONEKSI));
     $jumlah_record = mysqli_num_rows($auto);
 
-    
+
     if ($jumlah_record == 0) {
         $nomor = 1;
     } else {
@@ -119,7 +119,7 @@ function tampil($DATA)
     $HASIL = mysqli_query($KONEKSI, $DATA);
     $data = []; //MEYIAPKAN VARIABLE/WADAH YG MASI KOSONG UNTUK NANTINYA AKAN KITA GUNAKAN UNTUK MENYIMPAN DATA YANG KITA QUERY/PANGGIL DARI DATA BASE
     while ($row = mysqli_fetch_assoc($HASIL)) {
-    $data[] = $row;
+        $data[] = $row;
     }
     return $data; // kita kembalikan nilainya, di munculkan 
 
@@ -222,6 +222,151 @@ function logout()
     header("Location: login.php");
     exit();
 }
+
+// Fungsi edit setting
+function edit_setting($data)
+{
+    global $KONEKSI;
+    global $tgl;
+
+    // Pastikan koneksi tersedia
+    if (!$KONEKSI) {
+        die("Koneksi database gagal: " . mysqli_connect_error());
+    }
+
+    // Menghindari SQL Injection
+    $nama_sekolah =  mysqli_real_escape_string($KONEKSI, htmlspecialchars($data["nama_sekolah"]));
+    $alamat_sekolah =  mysqli_real_escape_string($KONEKSI, htmlspecialchars($data["alamat_sekolah"]));
+    $email_sekolah =  mysqli_real_escape_string($KONEKSI, htmlspecialchars($data["email_sekolah"]));
+    $telepon_sekolah =  mysqli_real_escape_string($KONEKSI, htmlspecialchars($data["telepon_sekolah"]));
+    $kota =  mysqli_real_escape_string($KONEKSI, htmlspecialchars($data["kota"]));
+    $kecamatan =  mysqli_real_escape_string($KONEKSI, htmlspecialchars($data["kecamatan"]));
+    $provinsi =  mysqli_real_escape_string($KONEKSI, htmlspecialchars($data["provinsi"]));
+
+    // Query UPDATE yang sudah diperbaiki
+    $sql_setting = "UPDATE tbl_setting SET 
+                        nama_sekolah       = '$nama_sekolah',
+                        alamat_sekolah     = '$alamat_sekolah',
+                        email_sekolah      = '$email_sekolah',
+                        telepon_sekolah    = '$telepon_sekolah',
+                        kota               = '$kota',
+                        kecamatan          = '$kecamatan',
+                        provinsi           = '$provinsi',
+                        update_at          = '$tgl'";
+
+    // Akhiri query
+    $sql_setting .= " WHERE id_sekolah = 1"; // Tambahkan kondisi WHERE agar tidak memperbarui semua data!
+
+    // Debugging: Tampilkan query jika ada error
+    if (mysqli_query($KONEKSI, $sql_setting)) {
+        echo "<script>alert('Data berhasil diperbarui');</script>";
+    } else {
+        echo "<script>alert('Gagal memperbarui data: " . mysqli_error($KONEKSI) . "');</script>";
+    }
+
+    return mysqli_affected_rows($KONEKSI);
+}
+
+
+//fungsi parameter khusus logo
+function update_logo_file($data, $file, $target, $foto_lama)
+{
+    // Pastikan file dikirimkan
+    if (!isset($file['Photo']) || empty($file['Photo']['name'])) {
+        echo "<script>alert('Tidak ada file yang diupload!');</script>";
+        return false;
+    }
+
+    // Inisialisasi elemen dari file
+    $namaFile   = $file['Photo']['name'];
+    $ukuranFile = $file['Photo']['size'];
+    $error      = $file['Photo']['error'];
+    $tmpName    = $file['Photo']['tmp_name'];
+
+    $kode  = htmlspecialchars($data['kode']);
+
+    // Validasi ekstensi file
+    $ekstensiValid = ['jpeg', 'jpg', 'bmp', 'png'];
+    $ekstensifile  = strtolower(pathinfo($namaFile, PATHINFO_EXTENSION));
+
+    if (!in_array($ekstensifile, $ekstensiValid)) {
+        echo "<script>alert('File yang anda upload bukan gambar!');</script>";
+        return false;
+    }
+
+    // Validasi ukuran gambar
+    if ($ukuranFile > 1 * 1024 * 1024) {
+        echo "<script>alert('Ukuran file tidak boleh lebih dari 1MB!');</script>";
+        return false;
+    }
+
+    // Hapus foto lama jika ada
+    if (!empty($foto_lama) && file_exists($target . $foto_lama)) {
+        unlink($target . $foto_lama);
+    }
+
+    // Membuat nama file baru yang unik
+    $id_random = uniqid();
+    $namaFileBaru = $kode . "_" . $id_random . "." . $ekstensifile;
+
+    $file_path = $target . $namaFileBaru;
+
+    // Cek apakah file berhasil diupload
+    if (move_uploaded_file($tmpName, $file_path)) {
+        return $namaFileBaru;
+    } else {
+        echo "<script>alert('Gagal upload file!');</script>";
+        return false;
+    }
+}
+
+
+function edit_logo($data, $file, $target)
+{
+    global $KONEKSI;
+
+    if (!isset($file['Photo']) || empty($target)) {
+        echo "Kesalahan: Parameter tidak valid.";
+        return false;
+    }
+
+    $foto_lama = isset($data['photo_db']) ? stripslashes($data['photo_db']) : '';
+    $cek_file_lama = $target . basename($foto_lama);
+
+    if (isset($file['Photo']['error']) && $file['Photo']['error'] === UPLOAD_ERR_OK) {
+        $gambar_foto = update_logo_file($data, $file, $target, $foto_lama);
+
+        if (!$gambar_foto) {
+            echo "Gagal mengunggah file baru.";
+            return false;
+        }
+
+        echo "File Baru: " . $gambar_foto . " berhasil di-upload.";
+
+        // Hapus foto lama jika ada
+        if (!empty($foto_lama) && file_exists($cek_file_lama)) {
+            if (unlink($cek_file_lama)) {
+                echo "File lama berhasil dihapus.";
+            } else {
+                echo "Gagal menghapus file lama.";
+                return false;
+            }
+        }
+
+        return $gambar_foto; // Mengembalikan nama file baru agar bisa disimpan ke database
+    } else {
+        if (!empty($foto_lama) && file_exists($cek_file_lama)) {
+            echo "Menggunakan foto lama: " . $foto_lama;
+            return $foto_lama;
+        } else {
+            echo "Foto lama tidak ditemukan.";
+            return false;
+        }
+    }
+}
+
+
+
 
 
 //fungsi tambah data admin
@@ -564,6 +709,3 @@ function tambah_pengguna($data, $file, $target)
 
     return mysqli_affected_rows($KONEKSI);
 }
-
-
-?>

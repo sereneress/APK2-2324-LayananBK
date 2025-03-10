@@ -6,6 +6,7 @@ $sql = "SELECT * FROM `tbl_setting` WHERE 1";
 
 $edit = mysqli_query($KONEKSI, $sql);
 while ($row = mysqli_fetch_assoc($edit)) {
+    $id_sekolah = $row['id_sekolah'];
     $nama_sekolah = $row['nama_sekolah'];
     $alamat_sekolah = $row['alamat_sekolah'];
     $email_sekolah = $row['email_sekolah'];
@@ -45,8 +46,14 @@ if (isset($_POST['editdata'])) {
         <h5 class="card-header">Data Sekolah</h5>
         <div class="card-body">
             <!-- Tambahkan action dan method -->
-            <form class="needs-validation" method="POST">  
+            <form class="needs-validation" method="post" enctype="multipart/form-data">
                 <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                        <input type="hidden" class="form-control" id="InputIdAdmin" name="kode" value="<?php echo $id_sekolah; ?>" readonly>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
                         <label for="InputNamaSekolah">Nama Sekolah</label>
                         <input type="text" name="nama_sekolah" value="<?php echo $nama_sekolah; ?>" class="form-control" id="InputNamaSekolah" placeholder="Nama Sekolah" required><br>
@@ -83,15 +90,53 @@ if (isset($_POST['editdata'])) {
                     </div>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="inputLogo">Logo Sekolah</label><br>
-                    <img src="../images/setting/<?php echo $foto; ?>" width="100px">
-                    <input type="hidden" name="photo_db" value="0">
-                    <input type="file" class="form-control mt-2" id="inputLogo" name="Photo" required><br>
-                </div>
-                <div class="form-group col-md-6">
                     <button type="submit" name="editdata" class="btn btn-primary mb-4 mt-3">Perbaharui Data Sekolah</button>
                 </div>
             </form>
+
+            <?php
+                    if (isset($_POST['editlogo'])) {
+                        include "proses_edit_logo.php";
+                    }
+
+                    // Pastikan $photo didefinisikan sebelum digunakan
+                    $foto = isset($foto) ? $foto : '';
+
+                    if (empty($foto)) {
+                        echo "<script>alert('Variabel \$photo kosong!');</script>";
+                    }
+                    ?>
+
+<form class="needs-validation" method="post" enctype="multipart/form-data">
+    <div class="form-group col-md-6">
+        <!-- Input Hidden untuk Menyimpan Foto Lama -->
+        <input type="hidden" class="form-control" id="InputIdAdmin" name="kode" value="<?php echo $id_sekolah; ?>" readonly>
+        
+        <input type="hidden" name="photo_db" value="<?= !empty($foto) ? basename($foto) : ''; ?>">
+
+        <!-- Preview Foto Lama Jika Ada -->
+        <?php if (!empty($foto)) : ?>
+            <img src="../images/setting/<?= basename($foto); ?>" width="200px" alt="Logo Sekolah">
+        <?php else : ?>
+            <p class="text-danger">Tidak ada logo saat ini.</p>
+        <?php endif; ?>
+
+        <br>
+
+        <!-- Input File Upload -->
+        <input type="file" id="input-file-max-fs" name="Photo" class="dropify" 
+            data-default-file="<?= !empty($foto) ? "../images/setting/" . basename($foto) : ''; ?>"
+            data-max-file-size="2M" required />
+
+        <br>
+
+        <!-- Tombol Submit -->
+        <button type="submit" name="editlogo" class="btn btn-primary mb-4 mt-3">
+            Perbarui Foto
+        </button>
+    </div>
+</form>
+
         </div>
     </div>
 </div>
