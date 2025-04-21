@@ -659,7 +659,70 @@ function hapus_pengguna()
     return mysqli_affected_rows($KONEKSI);
 }
 
+//fungsi tambah jurusan
+function tambah_jurusan()
+{
+    global $KONEKSI;
+    global $tgl;
 
+    $kode_jurusan   = stripslashes($_POST['kode']); //ini variable yg di atasnya
+    $nama_jurusan = stripslashes($_POST['nama_jur']);
+
+    //tambahkan data user baru ke tbl_jurusan
+    $sql_jurusan = "INSERT INTO tbl_jurusan SET 
+    kode_jurusan = '$kode_jurusan',
+    nama_jurusan = '$nama_jurusan',
+    create_at = '$tgl' ";                                                                                           
+    //kiri database, kanan variable yg di atas
+
+    mysqli_query($KONEKSI, $sql_jurusan) or die ("gagal menambahkan jurusan baru" . mysqli_error($KONEKSI));
+
+    return mysqli_affected_rows($KONEKSI);
+}
+
+//fungsi hapus jurusan
+function hapus_jurusan()
+{
+    global $KONEKSI;
+    $kode_jurusan = $_GET['id'];
+
+    // hapus file gambar yang usernya kita hapus
+    $sql = "SELECT * FROM tbl_jurusan WHERE kode_jurusan='$kode_jurusan' " or die("Data tidak ditemukan" . mysqli_error($KONEKSI));
+    $hasil = mysqli_query($KONEKSI, $sql);
+    $row = mysqli_fetch_assoc($hasil);
+
+    // hapus data di tabel jabatan
+    $query_jurusan = "DELETE FROM tbl_jurusan WHERE kode_jurusan='$kode_jurusan' ";
+    mysqli_query($KONEKSI, $query_jurusan) or die("Gagal melakukan hapus data jurusan" . mysqli_error($KONEKSI));
+
+    return mysqli_affected_rows($KONEKSI);
+}
+
+//fungsi edit jurusan
+
+function edit_jurusan()
+{
+    global $KONEKSI;
+    global $tgl;
+
+    $kode_jurusan   = stripslashes($_POST['kode']);
+    $nama_jurusan = stripslashes($_POST['nama_jur']);
+
+    //update (edit) data ke tbl_jabatan
+    $sql_jur = "UPDATE tbl_jurusan SET 
+    kode_jurusan = '$kode_jurusan',
+    nama_jurusan = '$nama_jurusan',
+    update_at = '$tgl' WHERE tbl_jurusan.kode_jurusan = '$kode_jurusan' ";
+
+    //cek apakah query update data berhasil
+    if (mysqli_query($KONEKSI, $sql_jur)) {
+        echo "<script>alert('Data Berhasil Di Update!!')</script>";
+    } else {
+        echo "<script>alert('Data Gagal Di Update')</script>";
+    }
+
+    return mysqli_affected_rows($KONEKSI);
+} //kurung tutup function edit_jurusan
 
 
 

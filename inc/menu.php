@@ -21,6 +21,10 @@ switch ($pages) {
         include '../pages/master/setting.php';
         break;
 
+    case 'jurusan':
+        include '../pages/jurusan/jurusan.php';
+        break;
+
     case 'dashboard':
         include '../pages/master/dashboard.php';
         break;
