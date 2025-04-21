@@ -227,7 +227,7 @@ foreach ($sql_login as $user_login) {
                                 <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4"><i class="fab fa-fw fa-wpforms"></i>User</a>
                                 <div id="submenu-4" class="collapse submenu" style="">
                                     <ul class="nav flex-column">
-                                    <li class="nav-item">
+                                        <li class="nav-item">
                                             <a class="nav-link" href="?pages=user_admin">Admin</a>
                                         </li>
                                         <li class="nav-item">
@@ -278,6 +278,9 @@ foreach ($sql_login as $user_login) {
                             </li>
                             <li class="nav-divider">
                                 Features
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="?pages=jurusan">Data Jurusan</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-6" aria-controls="submenu-6"><i class="fas fa-fw fa-file"></i> Pages </a>
