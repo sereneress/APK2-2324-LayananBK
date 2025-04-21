@@ -29,6 +29,10 @@ switch ($pages) {
         include '../pages/jurusan/jurusan.php';
         break;
 
+    case 'tahun_ajaran':
+        include '../pages/tahun_ajaran/tahun_ajaran.php';
+        break;
+
     case 'user_perhotelan1':
         include '../pages/siswa/perhotelan1/user_perhotelan1.php';
         break;
