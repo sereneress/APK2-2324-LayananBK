@@ -724,7 +724,91 @@ function edit_jurusan()
     return mysqli_affected_rows($KONEKSI);
 } //kurung tutup function edit_jurusan
 
+//fungsi tambah TA
+function tambah_TA($data)
+{
+    global $KONEKSI;
+    global $tgl;
 
+    $nama = stripslashes($_POST['nama']);
+    $mulai = stripslashes($_POST['mulai']);
+    $selesai = stripslashes($_POST['selesai']);
+
+    if ($selesai == "" || !$selesai == "0000-00-00"
+    ) {
+        $status = "Active";
+    } else {
+        $status = "Inactive";
+    }
+
+    //cek TA yang didaftar apakah sudah dipakai apa belum
+    $result = mysqli_query($KONEKSI, "SELECT nama_TA FROM tbl_tahun_ajaran WHERE nama_TA='$nama'");
+
+    if (mysqli_fetch_assoc($result)) {
+        echo "<script>
+        alert('Tahun Ajaran yang di-input sudah ada di database');
+        document.location.href = '?pages=TA';
+    </script>";
+        return false;
+    }
+
+    //tambahkan data user baru ke tbl_tahun_ajaran
+    $sql_TA = "INSERT INTO tbl_tahun_ajaran SET
+    nama_TA = '$nama',
+    tgl_mulai = '$mulai',
+    tgl_akhir = '$selesai',
+    status_tahun = 'Active',
+    create_at = '$tgl' ";
+
+    mysqli_query(
+        $KONEKSI,
+        $sql_TA
+    ) or die("gagal menambahkan Tahun Ajaran") . mysqli_error($KONEKIS);
+
+    return mysqli_affected_rows($KONEKSI);
+}
+
+//fungsi hapus TA
+function hapus_TA()
+{
+    global $KONEKSI;
+    $nama = $_GET['id'];
+
+    // hapus data di tbl_tahun_ajaran
+    $query_TA = "DELETE FROM tbl_tahun_ajaran WHERE nama_TA='$nama'";
+    mysqli_query($KONEKSI, $query_TA) or die("gagal ngapus data Tahun Ajaran" . mysqli_error($KONEKSI));
+
+    return mysqli_affected_rows($KONEKSI);
+}
+
+//edit TA
+function edit_TA()
+{
+    global $KONEKSI;
+    global $tgl;
+
+    $nama = stripslashes($_POST['nama']);
+    $mulai = stripslashes($_POST['mulai']);
+    $selesai = stripslashes($_POST['selesai']);
+    $status = stripslashes($_POST['status']);
+
+    //update data ke tbl_TA
+    $sql = "UPDATE tbl_tahun_ajaran SET
+    nama_TA = '$nama',
+    tgl_mulai = '$mulai',
+    tgl_akhir = '$selesai',
+    status_tahun = '$status',  
+    update_at = '$tgl' WHERE tbl_tahun_ajaran.nama_TA = '$nama' ";
+
+    // cek apakah query update data berhasil
+    if (mysqli_query($KONEKSI, $sql)) {
+        echo "data dah berhasil di-update!";
+    } else {
+        echo "data gagal di-update!" . mysqli_affected_rows($KONEKSI);
+    }
+
+    return mysqli_affected_rows($KONEKSI);
+}
 
 
 ?>
