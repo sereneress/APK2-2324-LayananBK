@@ -723,10 +723,10 @@ function tambah_jurusan()
     $sql_jurusan = "INSERT INTO tbl_jurusan SET 
     kode_jurusan = '$kode_jurusan',
     nama_jurusan = '$nama_jurusan',
-    create_at = '$tgl' ";                                                                                           
+    create_at = '$tgl' ";
     //kiri database, kanan variable yg di atas
 
-    mysqli_query($KONEKSI, $sql_jurusan) or die ("gagal menambahkan jurusan baru" . mysqli_error($KONEKSI));
+    mysqli_query($KONEKSI, $sql_jurusan) or die("gagal menambahkan jurusan baru" . mysqli_error($KONEKSI));
 
     return mysqli_affected_rows($KONEKSI);
 }
@@ -781,43 +781,30 @@ function tambah_TA($data)
     global $KONEKSI;
     global $tgl;
 
-    $nama = stripslashes($_POST['nama']);
-    $mulai = stripslashes($_POST['mulai']);
-    $selesai = stripslashes($_POST['selesai']);
+    $nama              = stripslashes($_POST['nama']);
+    $mulai             = stripslashes($_POST['mulai']);
+    $selesai           = stripslashes($_POST['selesai']);
+    $status            = $_POST['status'] ?? "Inactive";
 
-    if ($selesai == "" || !$selesai == "0000-00-00"
-    ) {
-        $status = "Active";
-    } else {
-        $status = "Inactive";
+    // Cek apakah tahun ajaran sudah ada
+    $cek = mysqli_query($KONEKSI, "SELECT nama_TA FROM tbl_tahun_ajaran WHERE nama_TA = '$nama'");
+    if (mysqli_num_rows($cek) > 0) {
+        return -1; // Data sudah ada
     }
 
-    //cek TA yang didaftar apakah sudah dipakai apa belum
-    $result = mysqli_query($KONEKSI, "SELECT nama_TA FROM tbl_tahun_ajaran WHERE nama_TA='$nama'");
+    // Jika belum ada, tambahkan
+    $sql_tahun_ajaran = "INSERT INTO tbl_tahun_ajaran SET 
+        nama_TA = '$nama',
+        tgl_mulai = '$mulai',
+        tgl_akhir = '$selesai',
+        status_tahun = '$status',
+        create_at = '$tgl'";
 
-    if (mysqli_fetch_assoc($result)) {
-        echo "<script>
-        alert('Tahun Ajaran yang di-input sudah ada di database');
-        document.location.href = '?pages=TA';
-    </script>";
-        return false;
-    }
-
-    //tambahkan data user baru ke tbl_tahun_ajaran
-    $sql_TA = "INSERT INTO tbl_tahun_ajaran SET
-    nama_TA = '$nama',
-    tgl_mulai = '$mulai',
-    tgl_akhir = '$selesai',
-    status_tahun = 'Active',
-    create_at = '$tgl' ";
-
-    mysqli_query(
-        $KONEKSI,
-        $sql_TA
-    ) or die("gagal menambahkan Tahun Ajaran") . mysqli_error($KONEKIS);
+    mysqli_query($KONEKSI, $sql_tahun_ajaran);
 
     return mysqli_affected_rows($KONEKSI);
 }
+
 
 //fungsi hapus TA
 function hapus_TA()
@@ -827,40 +814,49 @@ function hapus_TA()
 
     // hapus data di tbl_tahun_ajaran
     $query_TA = "DELETE FROM tbl_tahun_ajaran WHERE nama_TA='$nama'";
-    mysqli_query($KONEKSI, $query_TA) or die("gagal ngapus data Tahun Ajaran" . mysqli_error($KONEKSI));
+    mysqli_query($KONEKSI, $query_TA) or die("gagal menghapus data Tahun Ajaran" . mysqli_error($KONEKSI));
 
     return mysqli_affected_rows($KONEKSI);
 }
 
 //edit TA
-function edit_TA()
+function edit_TA($data)
 {
     global $KONEKSI;
-    global $tgl;
 
-    $nama = stripslashes($_POST['nama']);
-    $mulai = stripslashes($_POST['mulai']);
-    $selesai = stripslashes($_POST['selesai']);
-    $status = stripslashes($_POST['status']);
+    $id     = mysqli_real_escape_string($KONEKSI, $data['id']);
+    $nama   = mysqli_real_escape_string($KONEKSI, $data['nama']);
+    $mulai  = mysqli_real_escape_string($KONEKSI, $data['mulai']);
+    $selesai= mysqli_real_escape_string($KONEKSI, $data['selesai']);
+    $status = mysqli_real_escape_string($KONEKSI, $data['status']);
 
-    //update data ke tbl_TA
-    $sql = "UPDATE tbl_tahun_ajaran SET
-    nama_TA = '$nama',
-    tgl_mulai = '$mulai',
-    tgl_akhir = '$selesai',
-    status_tahun = '$status',  
-    update_at = '$tgl' WHERE tbl_tahun_ajaran.nama_TA = '$nama' ";
+    // Cek apakah nama tahun ajaran sudah ada tapi bukan milik ID ini
+    $cekNama = "SELECT COUNT(*) as total FROM tbl_tahun_ajaran 
+                WHERE nama_TA = '$nama' AND id_TA != '$id'";
+    $result = mysqli_query($KONEKSI, $cekNama);
+    $row = mysqli_fetch_assoc($result);
 
-    // cek apakah query update data berhasil
-    if (mysqli_query($KONEKSI, $sql)) {
-        echo "data dah berhasil di-update!";
-    } else {
-        echo "data gagal di-update!" . mysqli_affected_rows($KONEKSI);
+    if ($row['total'] > 0) {
+        echo "<script>alert('Tahun Ajaran sudah ada di database');</script>";
+        return 0; // tidak melakukan update
     }
+
+    // Jika status aktif, set semua jadi Inactive dulu
+    if ($status === 'Active') {
+        $resetStatus = "UPDATE tbl_tahun_ajaran SET status_tahun = 'Inactive'";
+        mysqli_query($KONEKSI, $resetStatus);
+    }
+
+    // Update record
+    $query = "UPDATE tbl_tahun_ajaran 
+              SET nama_TA = '$nama', 
+                  tgl_mulai = '$mulai', 
+                  tgl_akhir = '$selesai', 
+                  status_tahun = '$status',
+                  update_at = CURRENT_TIMESTAMP
+              WHERE id_TA = '$id'";
+
+    mysqli_query($KONEKSI, $query);
 
     return mysqli_affected_rows($KONEKSI);
 }
-
-?>
-
-

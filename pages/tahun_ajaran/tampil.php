@@ -59,8 +59,8 @@
                                     <td class="">
                                         <details>
                                             <summary>⋮</summary>
-                                            <a href="?pages=tahun_ajaran&aksi=view&id=<?php echo $user['nama_TA']; ?>">View</a><br>
-                                            <a href="?pages=tahun_ajaran&aksi=edit&id=<?php echo $user['nama_TA']; ?>">Edit</a><br>
+                                            <a href="?pages=tahun_ajaran&aksi=view&id=<?php echo $user['id_TA']; ?>">View</a><br>
+                                            <a href="?pages=tahun_ajaran&aksi=edit&id=<?php echo $user['id_TA']; ?>">Edit</a><br>
                                             <a href="#">Edit Modal</a><br>
                                             <a href="?pages=tahun_ajaran&aksi=hapus&id=<?php echo $user['nama_TA']; ?>">Delete</a><br>
                                         </details>
